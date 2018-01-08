@@ -1,0 +1,114 @@
+version: '3'
+
+networks:
+  rocketmq:
+
+services:
+  rocketmq-base:
+    image: $ROCKETMQ_BASE_IMAGE:$ROCKETMQ_VERSION
+    build: ./base
+
+  rocketmq-namesrv:
+    image: $ROCKETMQ_NAMESRV_IAMGE:$ROCKETMQ_VERSION
+    build:
+      context: ./namesrv
+      args:
+        BASE_IMAGE: $ROCKETMQ_BASE_IMAGE:$ROCKETMQ_VERSION
+    ports:
+      - "$ROCKETMQ_NAMESRV_PORT:$ROCKETMQ_NAMESRV_PORT"
+    depends_on:
+      - rocketmq-base
+    networks:
+      rocketmq:
+        aliases:
+          - $ROCKETMQ_NAMESRV_HOST
+
+  rocketmq-broker-a-m:
+    image: $ROCKETMQ_BROKER_A_M_IMAGE:$ROCKETMQ_VERSION
+    build:
+      context: ./broker
+      args:
+        BASE_IMAGE: $ROCKETMQ_BASE_IMAGE:$ROCKETMQ_VERSION
+        BROKER_IP1: $ROCKETMQ_HM_HOST
+        LISTEN_PORT: $ROCKETMQ_BROKER_A_M_PORT
+        PROPERTIES_FILE: "2m-2s-async/broker-a.properties"
+    environment:
+      NAMESRV_ADDR: $ROCKETMQ_NAMESRV_HOST:$ROCKETMQ_NAMESRV_PORT
+    ports:
+      - "$ROCKETMQ_BROKER_A_M_PORT:$ROCKETMQ_BROKER_A_M_PORT"
+      - "$ROCKETMQ_BROKER_A_M_PORT_VIP:$ROCKETMQ_BROKER_A_M_PORT_VIP"
+    depends_on:
+      - rocketmq-base
+      - rocketmq-namesrv
+    networks:
+      rocketmq:
+        aliases:
+          - $ROCKETMQ_BROKER_A_M_HOST
+
+  rocketmq-broker-a-s:
+    image: $ROCKETMQ_BROKER_A_S_IMAGE:$ROCKETMQ_VERSION
+    build:
+      context: ./broker
+      args:
+        BASE_IMAGE: $ROCKETMQ_BASE_IMAGE:$ROCKETMQ_VERSION
+        BROKER_IP1: $ROCKETMQ_HM_HOST
+        LISTEN_PORT: $ROCKETMQ_BROKER_A_S_PORT
+        PROPERTIES_FILE: "2m-2s-async/broker-a-s.properties"
+    environment:
+      NAMESRV_ADDR: $ROCKETMQ_NAMESRV_HOST:$ROCKETMQ_NAMESRV_PORT
+    ports:
+      - "$ROCKETMQ_BROKER_A_S_PORT:$ROCKETMQ_BROKER_A_S_PORT"
+      - "$ROCKETMQ_BROKER_A_S_PORT_VIP:$ROCKETMQ_BROKER_A_S_PORT_VIP"
+    depends_on:
+      - rocketmq-base
+      - rocketmq-namesrv
+      - rocketmq-broker-a-m
+    networks:
+      rocketmq:
+        aliases:
+          - $ROCKETMQ_BROKER_A_S_HOST
+
+  rocketmq-broker-b-m:
+      image: $ROCKETMQ_BROKER_B_M_IMAGE:$ROCKETMQ_VERSION
+      build:
+        context: ./broker
+        args:
+          BASE_IMAGE: $ROCKETMQ_BASE_IMAGE:$ROCKETMQ_VERSION
+          BROKER_IP1: $ROCKETMQ_HM_HOST
+          LISTEN_PORT: $ROCKETMQ_BROKER_B_M_PORT
+          PROPERTIES_FILE: "2m-2s-async/broker-b.properties"
+      environment:
+        NAMESRV_ADDR: $ROCKETMQ_NAMESRV_HOST:$ROCKETMQ_NAMESRV_PORT
+      ports:
+        - "$ROCKETMQ_BROKER_B_M_PORT:$ROCKETMQ_BROKER_B_M_PORT"
+        - "$ROCKETMQ_BROKER_B_M_PORT_VIP:$ROCKETMQ_BROKER_B_M_PORT_VIP"
+      depends_on:
+        - rocketmq-base
+        - rocketmq-namesrv
+      networks:
+        rocketmq:
+          aliases:
+            - $ROCKETMQ_BROKER_B_M_HOST
+
+  rocketmq-broker-b-s:
+    image: $ROCKETMQ_BROKER_B_S_IMAGE:$ROCKETMQ_VERSION
+    build:
+      context: ./broker
+      args:
+        BASE_IMAGE: $ROCKETMQ_BASE_IMAGE:$ROCKETMQ_VERSION
+        BROKER_IP1: $ROCKETMQ_HM_HOST
+        LISTEN_PORT: $ROCKETMQ_BROKER_B_S_PORT
+        PROPERTIES_FILE: "2m-2s-async/broker-b-s.properties"
+    environment:
+      NAMESRV_ADDR: $ROCKETMQ_NAMESRV_HOST:$ROCKETMQ_NAMESRV_PORT
+    ports:
+      - "$ROCKETMQ_BROKER_B_S_PORT:$ROCKETMQ_BROKER_B_S_PORT"
+      - "$ROCKETMQ_BROKER_B_S_PORT_VIP:$ROCKETMQ_BROKER_B_S_PORT_VIP"
+    depends_on:
+      - rocketmq-base
+      - rocketmq-namesrv
+      - rocketmq-broker-b-m
+    networks:
+      rocketmq:
+        aliases:
+          - $ROCKETMQ_BROKER_B_S_HOST

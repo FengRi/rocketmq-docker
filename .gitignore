@@ -1,0 +1,12 @@
+.idea
+.mvn
+.svn
+out
+classes
+target
+**/target
+**/classes
+**/lib
+*.iml
+build
+logs
