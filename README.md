@@ -30,3 +30,11 @@
 
 - `https://dist.apache.org/repos/dist/release/rocketmq/`
 - `https://github.com/jingxizheng/rocketmq-docker-sample` (参考此例子进行局部调整)
+
+## 源码地址 (将会在两个git仓库同步发布最新代码)
+
+- [GitHub][1]
+- [码云][2]
+
+[1]:https://github.com/FengRi/rocketmq-docker "GitHub"
+[2]:https://gitee.com/fengri/rocketmq-docker "码云"
